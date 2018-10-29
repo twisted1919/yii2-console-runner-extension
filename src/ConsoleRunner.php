@@ -65,7 +65,7 @@ class ConsoleRunner extends Component
     }
 
 	/**
-	 * Running console command on background.
+	 * Running console command
 	 * 
 	 * @param string $cmd
 	 * @param bool $sendBackground
@@ -78,11 +78,14 @@ class ConsoleRunner extends Component
 		    return false;
 	    }
 	    
-        $cmd = "{$this->phpBinaryPath} {$this->file} $cmd";
-        $cmd = $this->isWindows() === true
-            ? $cmd = "start" . ($sendBackground ? ' /b' : '') . " {$cmd}"
-            : $cmd = "{$cmd} > /dev/null 2>&1" . ($sendBackground ? ' &' : '');
-
+        $cmd = $this->phpBinaryPath . ' -q ' . $this->file . ' ' . $cmd;
+	    
+	    if (!$this->isWindows()) {
+	    	$cmd .= ' >/dev/null 2>&1' . ($sendBackground ? ' &' : '');
+	    } else {
+	    	$cmd = 'start' . ($sendBackground ? ' /b' : '') . ' ' . $cmd; 
+	    }
+	    
 	    if (($res = popen($cmd, 'r')) === false) {
 		    return false;
 	    }
@@ -97,6 +100,6 @@ class ConsoleRunner extends Component
      */
     protected function isWindows(): bool
     {
-        return PHP_OS == 'WINNT' || PHP_OS == 'WIN32';
+        return stripos(PHP_OS, 'win') === 0;
     }
 }
