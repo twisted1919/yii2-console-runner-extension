@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace vova07\console;
+namespace twisted1919\console;
 
-use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
+use twisted1919\helpers\Common as CommonHelper;
 
 /**
  * ConsoleRunner - a component for running console commands in background.
@@ -25,7 +25,7 @@ use yii\base\InvalidConfigException;
  * ...
  * components [
  *     'consoleRunner' => [
- *         'class' => 'vova07\console\ConsoleRunner',
+ *         'class' => twisted1919\console\ConsoleRunner::class,
  *         'file' => '@my/path/to/yii', // Or an absolute path to console file.
  *         'phpBinaryPath' => '/my/path/to/php', // This is an optional param you may use to override the default `php` binary path.
  *     ]
@@ -60,23 +60,28 @@ class ConsoleRunner extends Component
         if ($this->file === null) {
             throw new InvalidConfigException('The "file" property must be set.');
         } else {
-            $this->file = Yii::getAlias($this->file);
+            $this->file = get_alias($this->file);
         }
     }
 
-    /**
-     * Running console command on background.
-     *
-     * @param string $cmd Argument that will be passed to console application.
-     *
-     * @return boolean
-     */
-    public function run($cmd)
+	/**
+	 * Running console command on background.
+	 * 
+	 * @param string $cmd
+	 * @param bool $sendBackground
+	 *
+	 * @return bool
+	 */
+    public function run(string $cmd, bool $sendBackground = true): bool
     {
+	    if (!CommonHelper::functionExists('popen') || !CommonHelper::functionExists('pclose')) {
+		    return false;
+	    }
+	    
         $cmd = "{$this->phpBinaryPath} {$this->file} $cmd";
         $cmd = $this->isWindows() === true
-            ? $cmd = "start /b {$cmd}"
-            : $cmd = "{$cmd} > /dev/null 2>&1 &";
+            ? $cmd = "start" . ($sendBackground ? ' /b' : '') . " {$cmd}"
+            : $cmd = "{$cmd} > /dev/null 2>&1" . ($sendBackground ? ' &' : '');
 
         pclose(popen($cmd, 'r'));
 
@@ -88,7 +93,7 @@ class ConsoleRunner extends Component
      *
      * @return boolean `true` if it's Windows OS.
      */
-    protected function isWindows()
+    protected function isWindows(): bool
     {
         return PHP_OS == 'WINNT' || PHP_OS == 'WIN32';
     }

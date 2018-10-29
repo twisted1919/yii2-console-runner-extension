@@ -1,6 +1,6 @@
 <?php
 
-namespace vova07\console;
+namespace twisted1919\console;
 
 use PHPUnit\Framework\TestCase;
 
