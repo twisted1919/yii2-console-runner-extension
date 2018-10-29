@@ -83,9 +83,11 @@ class ConsoleRunner extends Component
             ? $cmd = "start" . ($sendBackground ? ' /b' : '') . " {$cmd}"
             : $cmd = "{$cmd} > /dev/null 2>&1" . ($sendBackground ? ' &' : '');
 
-        pclose(popen($cmd, 'r'));
+	    if (($res = popen($cmd, 'r')) === false) {
+		    return false;
+	    }
 
-        return true;
+	    return (int)pclose($res) > -1;
     }
 
     /**
