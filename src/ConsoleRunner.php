@@ -87,7 +87,7 @@ class ConsoleRunner extends Component
 		    return false;
 	    }
 
-	    return (int)pclose($res) > -1;
+	    return (int)pclose($res) === 0;
     }
 
     /**
