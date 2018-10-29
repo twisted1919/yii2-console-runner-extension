@@ -29,7 +29,7 @@ $cr->run('controller/action param1 param2 ...');
 ```php
 // config.php
 ...
-components [
+'components' => [
     'consoleRunner' => [
         'class' => twisted1919\console\ConsoleRunner::class,
         'file' => '@my/path/to/yii' // or an absolute path to console file
