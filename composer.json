@@ -21,6 +21,7 @@
     },
     "minimum-stability": "stable",
     "require": {
+        "php": ">=7.1",
         "yiisoft/yii2": "*",
         "twisted1919/yii2-shortcut-functions": "^1.0",
         "twisted1919/yii2-helpers": "^2.0"
